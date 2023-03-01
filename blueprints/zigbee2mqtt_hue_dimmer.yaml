@@ -1,0 +1,76 @@
+blueprint:
+  name: Philips Hue Dimmer switch (RWL021) (Zigbee2MQTT)
+  description: "Tested with Philips Hue Smart Wireless Dimmer Switch RWL021.\n\nPressing ON will turn light on full brightness\nPressing OFF will turn light off\nPressing UP (brighter) will turn the light on from off and step brightness up while held\nPressing DOWN (dimming) will dim the light in 10% steps until off, or turn the light on dimly"
+  domain: automation
+  input:
+    action_sensor:
+      name: Action Sensor
+      description: Zigbee2MQTT Hue Dimmer action
+      selector:
+        entity:
+          integration: mqtt
+          domain: sensor
+          multiple: false
+    entity_light:
+      name: Light or a light group
+      description: Light or a light group to be controlled.
+      selector:
+        entity:
+          multiple: true
+          domain: light
+  source_url: https://github.com/na4ma4/ha-automations/blob/main/blueprints/zigbee2mqtt_hue_dimmer.yaml
+mode: queued
+max_exceeded: silent
+trace:
+  stored_traces: 30
+trigger:
+  - platform: event
+    event_type: state_changed
+    event_data:
+      entity_id: !input action_sensor
+condition:
+  - condition: template
+    value_template: '{{ trigger.event.data.new_state.state not in ("", "None") }}'
+action:
+  - variables:
+      command: '{{ trigger.event.data.new_state.state }}'
+  - choose:
+      - conditions: '{{ command == "on_press" }}'
+        sequence:
+          - service: light.turn_on
+            data:
+              brightness_pct: 100
+              transition: 0.3
+            target:
+              entity_id: !input entity_light
+      - conditions: '{{ command == "off_press" }}'
+        sequence:
+          - service: light.turn_off
+            target:
+              entity_id: !input entity_light
+            data:
+              transition: 0.3
+      - conditions: '{{ command == "down_hold" }}'
+        sequence:
+          - service: light.turn_on
+            data:
+              brightness_step_pct: -10
+              transition: 0.4
+            target:
+              entity_id: !input entity_light
+      - conditions: '{{ command == "up_hold" }}'
+        sequence:
+          - service: light.turn_on
+            data:
+              brightness_step_pct: 10
+              transition: 0.4
+            target:
+              entity_id: !input entity_light
+      - conditions: '{{ command == "down_short_release" }}'
+        sequence:
+          - service: light.turn_on
+            data:
+              brightness_pct: 40
+              transition: 0.3
+            target:
+              entity_id: !input entity_light
