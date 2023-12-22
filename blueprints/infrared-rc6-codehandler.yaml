@@ -96,6 +96,15 @@ action:
           - condition: template
             value_template: >-
               {{ (trigger.event.data.address == '0x3B') and
+              (trigger.event.data.command == '0x9C') }}
+        sequence:
+          - alias: Do something when Digit 0 is pressed
+            if: '{{ not my_action_digit_0 in (''none'', ''null'', ''unavailable'', '''') }}'
+            then: !input 'action_digit_0'
+      - conditions:
+          - condition: template
+            value_template: >-
+              {{ (trigger.event.data.address == '0x3B') and
               (trigger.event.data.command == '0x44') }}
         sequence:
           - alias: Do something when Digit 1 is pressed
@@ -128,3 +137,48 @@ action:
           - alias: Do something when Digit 4 is pressed
             if: '{{ not my_action_digit_4 in (''none'', ''null'', ''unavailable'', '''') }}'
             then: !input 'action_digit_4'
+      - conditions:
+          - condition: template
+            value_template: >-
+              {{ (trigger.event.data.address == '0x3B') and
+              (trigger.event.data.command == '0x98') }}
+        sequence:
+          - alias: Do something when Digit 5 is pressed
+            if: '{{ not my_action_digit_5 in (''none'', ''null'', ''unavailable'', '''') }}'
+            then: !input 'action_digit_5'
+      - conditions:
+          - condition: template
+            value_template: >-
+              {{ (trigger.event.data.address == '0x3B') and
+              (trigger.event.data.command == '0x47') }}
+        sequence:
+          - alias: Do something when Digit 6 is pressed
+            if: '{{ not my_action_digit_6 in (''none'', ''null'', ''unavailable'', '''') }}'
+            then: !input 'action_digit_6'
+      - conditions:
+          - condition: template
+            value_template: >-
+              {{ (trigger.event.data.address == '0x3B') and
+              (trigger.event.data.command == '0x52') }}
+        sequence:
+          - alias: Do something when Digit 7 is pressed
+            if: '{{ not my_action_digit_7 in (''none'', ''null'', ''unavailable'', '''') }}'
+            then: !input 'action_digit_7'
+      - conditions:
+          - condition: template
+            value_template: >-
+              {{ (trigger.event.data.address == '0x3B') and
+              (trigger.event.data.command == '0x99') }}
+        sequence:
+          - alias: Do something when Digit 8 is pressed
+            if: '{{ not my_action_digit_8 in (''none'', ''null'', ''unavailable'', '''') }}'
+            then: !input 'action_digit_8'
+      - conditions:
+          - condition: template
+            value_template: >-
+              {{ (trigger.event.data.address == '0x3B') and
+              (trigger.event.data.command == '0x9A') }}
+        sequence:
+          - alias: Do something when Digit 9 is pressed
+            if: '{{ not my_action_digit_9 in (''none'', ''null'', ''unavailable'', '''') }}'
+            then: !input 'action_digit_9'
