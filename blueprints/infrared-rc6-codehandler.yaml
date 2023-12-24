@@ -80,7 +80,7 @@ variables:
   my_action_digit_7: !input 'action_digit_7'
   my_action_digit_8: !input 'action_digit_8'
   my_action_digit_9: !input 'action_digit_9'
-mode: queued
+mode: parallel
 max_exceeded: silent
 trace:
   stored_traces: 10
