@@ -1,6 +1,12 @@
 blueprint:
   name: Philips Hue Dimmer switch (RWL021) (Zigbee2MQTT)
-  description: "Tested with Philips Hue Smart Wireless Dimmer Switch RWL021.\n\nPressing ON will turn light on full brightness\nPressing OFF will turn light off\nPressing UP (brighter) will turn the light on from off and step brightness up while held\nPressing DOWN (dimming) will dim the light in 10% steps until off, or turn the light on dimly"
+  description: |
+    Tested with Philips Hue Smart Wireless Dimmer Switch RWL021.
+    
+    Pressing ON will turn light on full brightness
+    Pressing OFF will turn light off
+    Pressing UP (brighter) will turn the light on from off and step brightness up while held
+    Pressing DOWN (dimming) will dim the light in 10% steps until off, or turn the light on dimly
   domain: automation
   input:
     action_sensor:
