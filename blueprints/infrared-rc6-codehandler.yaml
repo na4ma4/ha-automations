@@ -6,7 +6,10 @@ blueprint:
     device_id:
       name: Device ID for Receiver
       description: Infrared Receiver Device ID
-      default: ''
+      selector:
+        device:
+          integration: mqtt
+          multiple: false
     action_digit_0:
       name: Action
       description: Action when Digit 0 is Pressed.
