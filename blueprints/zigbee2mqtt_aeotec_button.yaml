@@ -10,9 +10,10 @@ blueprint:
       description: The action entity on the button.
       selector:
         entity:
-          integration: mqtt
-          domain:
-          - sensor
+          filter:
+          - integration: mqtt
+            domain:
+            - sensor
           multiple: false
     action_button_single:
       name: Single Press Button Action
