@@ -6,8 +6,8 @@ blueprint:
   domain: automation
   input:
     button:
-      name: Aeotec Button Devuce
-      description: The button to use.
+      name: Aeotec Button Action Entity
+      description: The action entity on the button.
       selector:
         entity:
           integration: mqtt
