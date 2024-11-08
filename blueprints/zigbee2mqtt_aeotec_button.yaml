@@ -1,0 +1,73 @@
+blueprint:
+  name: Z2M - Aeotec Button (IM6001-BTP01) (Zigbee2MQTT)
+  description: |
+    Zigbee2MQTT automation, tested with Aeotec Button (GP-AEOBTNAU).
+  domain: automation
+  input:
+    button:
+      name: Aeotec Button Devuce
+      description: The button to use.
+      selector:
+        entity:
+          integration: mqtt
+          domain: sensor
+          multiple: false
+    action_button_single:
+      name: Single Press Button Action
+      description: Action to run on a single press of the button
+      default: []
+      selector:
+        action: {}
+    action_button_double:
+      name: Double Press Button Action
+      description: Action to run on a double press of the button
+      default: []
+      selector:
+        action: {}
+    action_button_hold:
+      name: Hold Button Action
+      description: Action to run on the holding of the button
+      default: []
+      selector:
+        action: {}
+  source_url: https://github.com/na4ma4/ha-automations/blob/main/blueprints/zigbee2mqtt_aeotec_button.yaml
+mode: queued
+max_exceeded: silent
+trace:
+  stored_traces: 10
+variables:
+  my_action_button_single: !input action_button_single
+  my_action_button_double: !input action_button_double
+  my_action_button_hold: !input action_button_hold
+triggers:
+  - trigger: event
+    event_type: state_changed
+    event_data:
+      entity_id: !input button
+condition:
+  - condition: template
+    value_template: '{{ trigger.event.data.new_state.state in ("single", "double", "hold") }}'
+action:
+  - variables:
+      old_state: '{{ trigger.event.data.old_state.state }}'
+      new_state: '{{ trigger.event.data.new_state.state }}'
+  - action: logbook.log
+    data:
+      name: Aeotec Button Pressed
+      message: "{{ trigger.event.data.entity_id }} state change from '{{ old_state }}' to '{{ new_state }}'"
+  - choose:
+      - conditions: '{{ new_state == "single" }}'
+        sequence:
+          - alias: Do something when button is pressed once
+            if: "{{ not my_action_button_single in ('none', 'null', 'unavailable', '') }}"
+            then: !input action_button_single
+      - conditions: '{{ new_state == "double" }}'
+        sequence:
+          - alias: Do something when button is pressed twice quickly
+            if: "{{ not my_action_button_double in ('none', 'null', 'unavailable', '') }}"
+            then: !input action_button_double
+      - conditions: '{{ new_state == "hold" }}'
+        sequence:
+          - alias: Do something when button hold has started
+            if: "{{ not my_action_button_hold in ('none', 'null', 'unavailable', '') }}"
+            then: !input action_button_hold
