@@ -8,7 +8,8 @@ blueprint:
       description: Infrared Receiver Device ID
       selector:
         device:
-          integration: mqtt
+          filter:
+          - integration: mqtt
           multiple: false
     action_digit_0:
       name: Action
@@ -87,7 +88,7 @@ max_exceeded: silent
 trace:
   stored_traces: 10
 trigger:
-- platform: event
+- trigger: event
   event_type: esphome.ir_code_received
   event_data:
     device_id: !input device_id
