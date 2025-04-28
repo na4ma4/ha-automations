@@ -1,5 +1,5 @@
 blueprint:
-  name: Automatic Device Charging Power Off (Tasmota)
+  name: Automatic Device Charging Power Off (MQTT)
   description: Monitor power usage on a HA controlled power switch and turn it off
     when usage drops below a designated amount.
   domain: automation
@@ -9,7 +9,7 @@ blueprint:
       description: The power switch to control from the automation.
       selector:
         entity:
-          integration: tasmota
+          integration: mqtt
           domain:
           - switch
           multiple: false
@@ -18,7 +18,7 @@ blueprint:
       description: The power switch attribute to monitor usage
       selector:
         entity:
-          integration: tasmota
+          integration: mqtt
           domain:
           - sensor
           device_class:
@@ -47,7 +47,7 @@ blueprint:
       default: []
       selector:
         action: {}
-  source_url: https://github.com/na4ma4/ha-automations/blob/main/blueprints/charger-auto-poweroff.yaml
+  source_url: https://github.com/na4ma4/ha-automations/blob/main/blueprints/charger-auto-poweroff-mqtt.yaml
 trigger:
 - platform: numeric_state
   entity_id: !input power_meter

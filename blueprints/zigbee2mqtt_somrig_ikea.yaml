@@ -19,7 +19,7 @@ blueprint:
         device:
           filter:
             manufacturer: IKEA
-            model: SOMRIG shortcut button (E2213)
+            model: SOMRIG shortcut button
     1_press_action:
       name: 1 - Single press action
       description: Choose action(s) to run when **1 dot** button is pressed.
