@@ -25,6 +25,7 @@ blueprint:
     action. This allows you to assign, e.g., a scene or anything else. Use the left
     and right button events with care, as before the long press event is sent, the
     "on" event gets triggered.
+  source_url: https://github.com/na4ma4/ha-automations/blob/main/blueprints/z2m-ikea-four-button-remote-styrbar-for-lights-e2001-e2002.yaml
   domain: automation
   input:
     remote:
@@ -32,9 +33,10 @@ blueprint:
       description: IKEA remote to use
       selector:
         device:
-          integration: mqtt
-          manufacturer: IKEA
-          model: STYRBAR remote control (E2001/E2002)
+          filter:
+            - integration: mqtt
+              manufacturer: IKEA
+              model: STYRBAR remote control (E2001/E2002)
           multiple: false
     light:
       name: Light(s)
@@ -103,13 +105,12 @@ blueprint:
       default: []
       selector:
         action: {}
-  source_url: https://github.com/na4ma4/ha-automations/blob/main/blueprints/z2m-ikea-four-button-remote-styrbar-for-lights-e2001-e2002.yaml
 mode: restart
 max_exceeded: silent
 variables:
   force_brightness: !input force_brightness
 trigger:
-  - platform: event
+  - trigger: event
     event_type: zha_event
     event_data:
       device_id: !input remote
@@ -128,13 +129,13 @@ action:
           - choose:
               - conditions: "{{ force_brightness }}"
                 sequence:
-                  - service: light.turn_on
+                  - action: light.turn_on
                     target: !input light
                     data:
                       transition: 1
                       brightness_pct: !input brightness
             default:
-              - service: light.turn_on
+              - action: light.turn_on
                 target: !input light
                 data:
                   transition: 1
@@ -143,7 +144,7 @@ action:
           - "{{ cluster_id == 6 }}"
           - "{{ endpoint_id == 1 }}"
         sequence:
-          - service: light.turn_off
+          - action: light.turn_off
             target: !input light
             data:
               transition: 1
@@ -155,7 +156,7 @@ action:
           - repeat:
               count: 10
               sequence:
-                - service: light.turn_on
+                - action: light.turn_on
                   target: !input light
                   data:
                     brightness_step_pct: 10
@@ -169,7 +170,7 @@ action:
           - repeat:
               count: 10
               sequence:
-                - service: light.turn_on
+                - action: light.turn_on
                   target: !input light
                   data:
                     brightness_step_pct: -10

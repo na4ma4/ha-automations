@@ -18,8 +18,9 @@ blueprint:
       selector:
         device:
           filter:
-            manufacturer: IKEA
-            model: SOMRIG shortcut button
+            - manufacturer: IKEA
+              model: SOMRIG shortcut button
+          multiple: false
     1_press_action:
       name: 1 - Single press action
       description: Choose action(s) to run when **1 dot** button is pressed.
@@ -28,14 +29,15 @@ blueprint:
         action: {}
     1_hold_action:
       name: 1 - Hold action
-      description: Choose action(s) to run when **1 dot** button is **pressed and hold**.
+      description:
+        Choose action(s) to run when **1 dot** button is **pressed and
+        hold**.
       default: []
       selector:
         action: {}
     1_double_press_action:
       name: 1 - Double press action
-      description:
-        Choose action(s) to run when pressing the **1 dot** button twice.
+      description: Choose action(s) to run when pressing the **1 dot** button twice.
       default: []
       selector:
         action: {}
@@ -47,14 +49,15 @@ blueprint:
         action: {}
     2_hold_action:
       name: 2 - Hold action
-      description: Choose action(s) to run when **2 dots** button is **pressed and hold**.
+      description:
+        Choose action(s) to run when **2 dots** button is **pressed and
+        hold**.
       default: []
       selector:
         action: {}
     2_double_press_action:
       name: 2 - Double press action
-      description:
-        Choose action(s) to run when pressing the **2 dots** button twice.
+      description: Choose action(s) to run when pressing the **2 dots** button twice.
       default: []
       selector:
         action: {}
@@ -82,61 +85,61 @@ blueprint:
 mode: single
 max_exceeded: silent
 trigger:
-  - platform: device
+  - trigger: device
     domain: mqtt
     device_id: !input z2m_device
     type: action
     subtype: 1_initial_press
     id: 1_initial_press
-  - platform: device
+  - trigger: device
     domain: mqtt
     device_id: !input z2m_device
     type: action
     subtype: 1_short_release
     id: 1_short_release
-  - platform: device
+  - trigger: device
     domain: mqtt
     device_id: !input z2m_device
     type: action
     subtype: 1_long_press
     id: 1_long_press
-  - platform: device
+  - trigger: device
     domain: mqtt
     device_id: !input z2m_device
     type: action
     subtype: 1_long_release
     id: 1_long_release
-  - platform: device
+  - trigger: device
     domain: mqtt
     device_id: !input z2m_device
     type: action
     subtype: 1_double_press
     id: 1_double_press
-  - platform: device
+  - trigger: device
     domain: mqtt
     device_id: !input z2m_device
     type: action
     subtype: 2_initial_press
     id: 2_initial_press
-  - platform: device
+  - trigger: device
     domain: mqtt
     device_id: !input z2m_device
     type: action
     subtype: 2_short_release
     id: 2_short_release
-  - platform: device
+  - trigger: device
     domain: mqtt
     device_id: !input z2m_device
     type: action
     subtype: 2_long_press
     id: 2_long_press
-  - platform: device
+  - trigger: device
     domain: mqtt
     device_id: !input z2m_device
     type: action
     subtype: 2_long_release
     id: 2_long_release
-  - platform: device
+  - trigger: device
     domain: mqtt
     device_id: !input z2m_device
     type: action
@@ -182,7 +185,7 @@ action:
                                     - 1_long_press
                               sequence:
                                 - wait_for_trigger:
-                                    - platform: device
+                                    - trigger: device
                                       domain: mqtt
                                       device_id: !input z2m_device
                                       type: action
@@ -214,7 +217,7 @@ action:
                                     - 2_long_press
                               sequence:
                                 - wait_for_trigger:
-                                    - platform: device
+                                    - trigger: device
                                       domain: mqtt
                                       device_id: !input z2m_device
                                       type: action

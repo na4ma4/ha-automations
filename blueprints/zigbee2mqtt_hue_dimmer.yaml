@@ -14,8 +14,9 @@ blueprint:
       description: Zigbee2MQTT Hue Dimmer action
       selector:
         entity:
-          integration: mqtt
-          domain: sensor
+          filter:
+            - integration: mqtt
+              domain: sensor
           multiple: false
     entity_light:
       name: Light or a light group
@@ -23,14 +24,15 @@ blueprint:
       selector:
         entity:
           multiple: true
-          domain: light
+          filter:
+            - domain: light
   source_url: https://github.com/na4ma4/ha-automations/blob/main/blueprints/zigbee2mqtt_hue_dimmer.yaml
 mode: queued
 max_exceeded: silent
 trace:
   stored_traces: 30
 trigger:
-  - platform: event
+  - trigger: event
     event_type: state_changed
     event_data:
       entity_id: !input action_sensor
@@ -39,11 +41,11 @@ condition:
     value_template: '{{ trigger.event.data.new_state.state not in ("", "None") }}'
 action:
   - variables:
-      command: '{{ trigger.event.data.new_state.state }}'
+      command: "{{ trigger.event.data.new_state.state }}"
   - choose:
       - conditions: '{{ command == "on_press" }}'
         sequence:
-          - service: light.turn_on
+          - action: light.turn_on
             data:
               brightness_pct: 100
               transition: 0.3
@@ -51,14 +53,14 @@ action:
               entity_id: !input entity_light
       - conditions: '{{ command == "off_press" }}'
         sequence:
-          - service: light.turn_off
+          - action: light.turn_off
             target:
               entity_id: !input entity_light
             data:
               transition: 0.3
       - conditions: '{{ command == "down_hold" }}'
         sequence:
-          - service: light.turn_on
+          - action: light.turn_on
             data:
               brightness_step_pct: -10
               transition: 0.4
@@ -66,7 +68,7 @@ action:
               entity_id: !input entity_light
       - conditions: '{{ command == "up_hold" }}'
         sequence:
-          - service: light.turn_on
+          - action: light.turn_on
             data:
               brightness_step_pct: 10
               transition: 0.4
@@ -74,7 +76,7 @@ action:
               entity_id: !input entity_light
       - conditions: '{{ command == "down_short_release" }}'
         sequence:
-          - service: light.turn_on
+          - action: light.turn_on
             data:
               brightness_pct: 40
               transition: 0.3

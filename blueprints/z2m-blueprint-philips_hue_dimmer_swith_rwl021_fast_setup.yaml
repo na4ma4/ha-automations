@@ -1,8 +1,7 @@
 blueprint:
   domain: automation
   name: Z2M - Philips Hue Dimmer Switch (RWL021)
-  description: |
-    Take the switch fast into use with pre-set configuration.
+  description: Take the switch fast into use with pre-set configuration.
   source_url: https://github.com/na4ma4/ha-automations/blob/main/blueprints/z2m-blueprint-philips_hue_dimmer_swith_rwl021_fast_setup.yaml
   input:
     zha_device:
@@ -10,8 +9,9 @@ blueprint:
       description: The switch to be taken into use.
       selector:
         device:
-          integration: mqtt
-          manufacturer: Philips
+          filter:
+            - integration: mqtt
+              manufacturer: Philips
           multiple: false
     zha_entity_light:
       name: Light or a light group
@@ -19,13 +19,14 @@ blueprint:
       selector:
         entity:
           multiple: true
-          domain: light
+          filter:
+            - domain: light
 mode: queued
 max_exceeded: silent
 variables:
   device_id: !input zha_device
 trigger:
-  - platform: device
+  - trigger: device
     domain: mqtt
     device_id: !input zha_device
     type: action
@@ -37,22 +38,22 @@ action:
       cluster_id: "{{ trigger.event.data.cluster_id }}"
       endpoint_id: "{{ trigger.event.data.endpoint_id }}"
       args: "{{ trigger.event.data.args }}"
-  - service: logbook.log
+  - action: logbook.log
     data:
       name: Device
       message: "{{ device_id }}"
-  - service: logbook.log
+  - action: logbook.log
     data:
       name: Command
       message: "{{ command }}"
-  - service: logbook.log
+  - action: logbook.log
     data:
       name: device_id
       message: "{{ trigger.event.data.device_id }}"
   - choose:
       - conditions: '{{ command == "on_press" }}'
         sequence:
-          - service: light.turn_on
+          - action: light.turn_on
             data:
               brightness_pct: 100
               transition: 0.3
@@ -60,14 +61,14 @@ action:
               entity_id: !input zha_entity_light
       - conditions: '{{ command == "off_press" }}'
         sequence:
-          - service: light.turn_off
+          - action: light.turn_off
             target:
               entity_id: !input zha_entity_light
             data:
               transition: 0.3
       - conditions: '{{ command == "down_hold" }}'
         sequence:
-          - service: light.turn_on
+          - action: light.turn_on
             data:
               brightness_step_pct: -15
               transition: 0.4
@@ -75,7 +76,7 @@ action:
               entity_id: !input zha_entity_light
       - conditions: '{{ command == "up_hold" }}'
         sequence:
-          - service: light.turn_on
+          - action: light.turn_on
             data:
               brightness_step_pct: 15
               transition: 0.4
@@ -83,7 +84,7 @@ action:
               entity_id: !input zha_entity_light
       - conditions: '{{ command == "up_short_release" }}'
         sequence:
-          - service: light.turn_on
+          - action: light.turn_on
             data:
               brightness_pct: 70
               transition: 0.3
@@ -91,7 +92,7 @@ action:
               entity_id: !input zha_entity_light
       - conditions: '{{ command == "down_short_release" }}'
         sequence:
-          - service: light.turn_on
+          - action: light.turn_on
             data:
               brightness_pct: 40
               transition: 0.3
@@ -101,7 +102,7 @@ action:
       - conditions: '{{ command == "on_press" or command == "up_short_release" }}'
         sequence:
           - delay: 0.4
-          - service: light.turn_on
+          - action: light.turn_on
             data:
               kelvin: 3400
               transition: 0.5
@@ -110,7 +111,7 @@ action:
       - conditions: '{{ command == "down_short_release" }}'
         sequence:
           - delay: 0.4
-          - service: light.turn_on
+          - action: light.turn_on
             data:
               kelvin: 2300
               transition: 0.5

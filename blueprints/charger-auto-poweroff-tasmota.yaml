@@ -1,6 +1,7 @@
 blueprint:
   name: Automatic Device Charging Power Off (Tasmota)
-  description: Monitor power usage on a HA controlled power switch and turn it off
+  description:
+    Monitor power usage on a HA controlled power switch and turn it off
     when usage drops below a designated amount.
   domain: automation
   input:
@@ -9,24 +10,27 @@ blueprint:
       description: The power switch to control from the automation.
       selector:
         entity:
-          integration: tasmota
-          domain:
-          - switch
+          filter:
+            - integration: tasmota
+              domain:
+                - switch
           multiple: false
     power_meter:
       name: Power Usage
       description: The power switch attribute to monitor usage
       selector:
         entity:
-          integration: tasmota
-          domain:
-          - sensor
-          device_class:
-          - power
+          filter:
+            - integration: tasmota
+              domain:
+                - sensor
+              device_class:
+                - power
           multiple: false
     low_usage_threshold:
       name: Charging Complete Threshold
-      description: The amount in watts (W) that the charging is expected to be complete
+      description:
+        The amount in watts (W) that the charging is expected to be complete
         at.
       selector:
         number:
@@ -37,7 +41,8 @@ blueprint:
           step: 1.0
     low_usage_hysteresis:
       name: Charging Complete Hysteresis
-      description: The time that the charging complete threshold needs to be maintained
+      description:
+        The time that the charging complete threshold needs to be maintained
         before charging is considered completed.
       selector:
         duration: {}
@@ -49,20 +54,20 @@ blueprint:
         action: {}
   source_url: https://github.com/na4ma4/ha-automations/blob/main/blueprints/charger-auto-poweroff-tasmota.yaml
 trigger:
-- platform: numeric_state
-  entity_id: !input power_meter
-  below: !input low_usage_threshold
-  for: !input low_usage_hysteresis
+  - trigger: numeric_state
+    entity_id: !input power_meter
+    below: !input low_usage_threshold
+    for: !input low_usage_hysteresis
 variables:
-  power_switch_entity: ''
+  power_switch_entity: ""
 condition:
-- condition: state
-  entity_id: !input power_switch
-  state: 'on'
-action:
-- service: switch.turn_off
-  target:
+  - condition: state
     entity_id: !input power_switch
-- choose:
-  - conditions: '{{ post_charge_actions is defined }}'
-    sequence: !input post_charge_actions
+    state: "on"
+action:
+  - action: switch.turn_off
+    target:
+      entity_id: !input power_switch
+  - choose:
+      - conditions: "{{ post_charge_actions is defined }}"
+        sequence: !input post_charge_actions
