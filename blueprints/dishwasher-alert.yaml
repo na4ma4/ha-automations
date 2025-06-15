@@ -35,6 +35,4 @@ trigger:
   from: Drying
   to: N/A
 action:
-- choose:
-  - conditions: '{{ post_charge_actions is defined }}'
-    sequence: !input cycle_complete_actions
+  - sequence: !input cycle_complete_actions
