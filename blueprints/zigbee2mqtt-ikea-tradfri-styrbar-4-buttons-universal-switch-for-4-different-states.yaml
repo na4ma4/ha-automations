@@ -2,12 +2,11 @@ blueprint:
   name: Zigbee2MQTT IKEA styrbar universal
   homeassistant:
     min_version: 2024.6.0
-  description:
-    Blueprint for Ikea Remote Controls Styrbar - 4 Buttons. With Left and
-    Right click you can switch the States. Create a helper input_select with 4 States
-    (State01, State02, State03, State04)
+  description: 'Blueprint for Ikea Remote Controls Styrbar - 4 Buttons. With Left
+    and Right click you can switch the States. Create a helper input_select with 4
+    States (State01, State02, State03, State04)
 
-    Based on https://community.home-assistant.io/t/zigbee2mqtt-ikea-tradfri-styrbar-4-buttons-universal-switch-for-4-different-states/520309
+    Based on https://community.home-assistant.io/t/zigbee2mqtt-ikea-tradfri-styrbar-4-buttons-universal-switch-for-4-different-states/520309'
   domain: automation
   source_url: https://github.com/na4ma4/ha-automations/blob/main/blueprints/zigbee2mqtt-ikea-tradfri-styrbar-4-buttons-universal-switch-for-4-different-states.yaml
   input:
@@ -17,18 +16,21 @@ blueprint:
       selector:
         device:
           filter:
-            - integration: mqtt
-              manufacturer: IKEA
-              model: STYRBAR remote control
+          - integration: mqtt
+            manufacturer: IKEA
+            model: STYRBAR remote control
+          multiple: false
     helper_selector:
       name: Helper - active state
-      description:
-        Helper for activated state. Create a helper input_select with 4
+      description: Helper for activated state. Create a helper input_select with 4
         States (State01, State02, State03, State04)
       selector:
         entity:
           filter:
-            - domain: input_select
+          - domain:
+            - input_select
+          multiple: false
+          reorder: false
     section_state01:
       name: State 1
       collapsed: true
@@ -70,7 +72,6 @@ blueprint:
           default: []
           selector:
             action: {}
-
     section_state02:
       name: State 2
       collapsed: true
@@ -153,7 +154,6 @@ blueprint:
           default: []
           selector:
             action: {}
-
     section_state04:
       name: State 4
       collapsed: true
@@ -200,269 +200,269 @@ max_exceeded: silent
 variables:
   helper_selector: !input helper_selector
 triggers:
-  - trigger: device
-    domain: mqtt
-    device_id: !input remote
-    type: action
-    subtype: "on"
-    id: "on"
-  - trigger: device
-    domain: mqtt
-    device_id: !input remote
-    type: action
-    subtype: "off"
-    id: "off"
-  - trigger: device
-    domain: mqtt
-    device_id: !input remote
-    type: action
-    subtype: "arrow_right_click"
-    id: "right"
-  - trigger: device
-    domain: mqtt
-    device_id: !input remote
-    type: action
-    subtype: "arrow_left_click"
-    id: "left"
-  - trigger: device
-    domain: mqtt
-    device_id: !input remote
-    type: action
-    subtype: "on_long"
-    id: "on_long"
-  - trigger: device
-    domain: mqtt
-    device_id: !input remote
-    type: action
-    subtype: "off_long"
-    id: "off_long"
-  - trigger: device
-    domain: mqtt
-    device_id: !input remote
-    type: action
-    subtype: "arrow_right_hold"
-    id: "right_long"
-  - trigger: device
-    domain: mqtt
-    device_id: !input remote
-    type: action
-    subtype: "arrow_left_hold"
-    id: "left_long"
-  - trigger: device
-    domain: mqtt
-    device_id: !input remote
-    type: action
-    subtype: "arrow_right_release"
-    id: "right_stop"
-  - trigger: device
-    domain: mqtt
-    device_id: !input remote
-    type: action
-    subtype: "arrow_left_release"
-    id: "left_stop"
-  - trigger: device
-    domain: mqtt
-    device_id: !input remote
-    type: action
-    subtype: "brightness_stop"
-    id: "stop"
-  - trigger: device
-    domain: mqtt
-    device_id: !input remote
-    type: action
-    subtype: "brightness_move_up"
-    id: "on_long"
-  - trigger: device
-    domain: mqtt
-    device_id: !input remote
-    type: action
-    subtype: "brightness_move_down"
-    id: "off_long"
+- trigger: device
+  domain: mqtt
+  device_id: !input remote
+  type: action
+  subtype: 'on'
+  id: 'on'
+- trigger: device
+  domain: mqtt
+  device_id: !input remote
+  type: action
+  subtype: 'off'
+  id: 'off'
+- trigger: device
+  domain: mqtt
+  device_id: !input remote
+  type: action
+  subtype: arrow_right_click
+  id: right
+- trigger: device
+  domain: mqtt
+  device_id: !input remote
+  type: action
+  subtype: arrow_left_click
+  id: left
+- trigger: device
+  domain: mqtt
+  device_id: !input remote
+  type: action
+  subtype: on_long
+  id: on_long
+- trigger: device
+  domain: mqtt
+  device_id: !input remote
+  type: action
+  subtype: off_long
+  id: off_long
+- trigger: device
+  domain: mqtt
+  device_id: !input remote
+  type: action
+  subtype: arrow_right_hold
+  id: right_long
+- trigger: device
+  domain: mqtt
+  device_id: !input remote
+  type: action
+  subtype: arrow_left_hold
+  id: left_long
+- trigger: device
+  domain: mqtt
+  device_id: !input remote
+  type: action
+  subtype: arrow_right_release
+  id: right_stop
+- trigger: device
+  domain: mqtt
+  device_id: !input remote
+  type: action
+  subtype: arrow_left_release
+  id: left_stop
+- trigger: device
+  domain: mqtt
+  device_id: !input remote
+  type: action
+  subtype: brightness_stop
+  id: stop
+- trigger: device
+  domain: mqtt
+  device_id: !input remote
+  type: action
+  subtype: brightness_move_up
+  id: on_long
+- trigger: device
+  domain: mqtt
+  device_id: !input remote
+  type: action
+  subtype: brightness_move_down
+  id: off_long
 action:
-  - choose:
+- choose:
+  - conditions:
+    - condition: trigger
+      id: 'on'
+    sequence:
+    - choose:
       - conditions:
-          - condition: trigger
-            id: "on"
-        sequence:
-          - choose:
-              - conditions:
-                  - condition: state
-                    entity_id: !input helper_selector
-                    state: State01
-                sequence: !input onR1
-              - conditions:
-                  - condition: state
-                    entity_id: !input helper_selector
-                    state: State02
-                sequence: !input onR2
-              - conditions:
-                  - condition: state
-                    entity_id: !input helper_selector
-                    state: State03
-                sequence: !input onR3
-              - conditions:
-                  - condition: state
-                    entity_id: !input helper_selector
-                    state: State04
-                sequence: !input onR4
+        - condition: state
+          entity_id: !input helper_selector
+          state: State01
+        sequence: !input onR1
       - conditions:
-          - condition: trigger
-            id: "off"
-        sequence:
-          - choose:
-              - conditions:
-                  - condition: state
-                    entity_id: !input helper_selector
-                    state: State01
-                sequence: !input offR1
-              - conditions:
-                  - condition: state
-                    entity_id: !input helper_selector
-                    state: State02
-                sequence: !input offR2
-              - conditions:
-                  - condition: state
-                    entity_id: !input helper_selector
-                    state: State03
-                sequence: !input offR3
-              - conditions:
-                  - condition: state
-                    entity_id: !input helper_selector
-                    state: State04
-                sequence: !input offR4
+        - condition: state
+          entity_id: !input helper_selector
+          state: State02
+        sequence: !input onR2
       - conditions:
-          - condition: trigger
-            id: on_long
-        sequence:
-          - choose:
-              - conditions:
-                  - condition: state
-                    entity_id: !input helper_selector
-                    state: State01
-                sequence: !input on_longR1
-              - conditions:
-                  - condition: state
-                    entity_id: !input helper_selector
-                    state: State02
-                sequence: !input on_longR2
-              - conditions:
-                  - condition: state
-                    entity_id: !input helper_selector
-                    state: State03
-                sequence: !input on_longR3
-              - conditions:
-                  - condition: state
-                    entity_id: !input helper_selector
-                    state: State04
-                sequence: !input on_longR4
+        - condition: state
+          entity_id: !input helper_selector
+          state: State03
+        sequence: !input onR3
       - conditions:
-          - condition: trigger
-            id: off_long
-        sequence:
-          - choose:
-              - conditions:
-                  - condition: state
-                    entity_id: !input helper_selector
-                    state: State01
-                sequence: !input off_longR1
-              - conditions:
-                  - condition: state
-                    entity_id: !input helper_selector
-                    state: State02
-                sequence: !input off_longR2
-              - conditions:
-                  - condition: state
-                    entity_id: !input helper_selector
-                    state: State03
-                sequence: !input off_longR3
-              - conditions:
-                  - condition: state
-                    entity_id: !input helper_selector
-                    state: State04
-                sequence: !input off_longR4
+        - condition: state
+          entity_id: !input helper_selector
+          state: State04
+        sequence: !input onR4
+  - conditions:
+    - condition: trigger
+      id: 'off'
+    sequence:
+    - choose:
       - conditions:
-          - condition: trigger
-            id: right
-        sequence:
-          - if:
-              - condition: state
-                entity_id: !input helper_selector
-                state: unknown
-            then:
-              - service: input_select.select_first
-                data: {}
-                target:
-                  entity_id: !input helper_selector
-            else:
-              - service: input_select.select_next
-                data: {}
-                target:
-                  entity_id: !input helper_selector
+        - condition: state
+          entity_id: !input helper_selector
+          state: State01
+        sequence: !input offR1
       - conditions:
-          - condition: trigger
-            id: left
-        sequence:
-          - if:
-              - condition: state
-                entity_id: !input helper_selector
-                state: unknown
-            then:
-              - service: input_select.select_last
-                data: {}
-                target:
-                  entity_id: !input helper_selector
-            else:
-              - service: input_select.select_previous
-                data: {}
-                target:
-                  entity_id: !input helper_selector
+        - condition: state
+          entity_id: !input helper_selector
+          state: State02
+        sequence: !input offR2
       - conditions:
-          - condition: trigger
-            id: right_long
-        sequence:
-          - choose:
-              - conditions:
-                  - condition: state
-                    entity_id: !input helper_selector
-                    state: State01
-                sequence: !input right_longR1
-              - conditions:
-                  - condition: state
-                    entity_id: !input helper_selector
-                    state: State02
-                sequence: !input right_longR2
-              - conditions:
-                  - condition: state
-                    entity_id: !input helper_selector
-                    state: State03
-                sequence: !input right_longR3
-              - conditions:
-                  - condition: state
-                    entity_id: !input helper_selector
-                    state: State04
-                sequence: !input right_longR4
+        - condition: state
+          entity_id: !input helper_selector
+          state: State03
+        sequence: !input offR3
       - conditions:
-          - condition: trigger
-            id: left_long
-        sequence:
-          - choose:
-              - conditions:
-                  - condition: state
-                    entity_id: !input helper_selector
-                    state: State01
-                sequence: !input left_longR1
-              - conditions:
-                  - condition: state
-                    entity_id: !input helper_selector
-                    state: State02
-                sequence: !input left_longR2
-              - conditions:
-                  - condition: state
-                    entity_id: !input helper_selector
-                    state: State03
-                sequence: !input left_longR3
-              - conditions:
-                  - condition: state
-                    entity_id: !input helper_selector
-                    state: State04
-                sequence: !input left_longR4
+        - condition: state
+          entity_id: !input helper_selector
+          state: State04
+        sequence: !input offR4
+  - conditions:
+    - condition: trigger
+      id: on_long
+    sequence:
+    - choose:
+      - conditions:
+        - condition: state
+          entity_id: !input helper_selector
+          state: State01
+        sequence: !input on_longR1
+      - conditions:
+        - condition: state
+          entity_id: !input helper_selector
+          state: State02
+        sequence: !input on_longR2
+      - conditions:
+        - condition: state
+          entity_id: !input helper_selector
+          state: State03
+        sequence: !input on_longR3
+      - conditions:
+        - condition: state
+          entity_id: !input helper_selector
+          state: State04
+        sequence: !input on_longR4
+  - conditions:
+    - condition: trigger
+      id: off_long
+    sequence:
+    - choose:
+      - conditions:
+        - condition: state
+          entity_id: !input helper_selector
+          state: State01
+        sequence: !input off_longR1
+      - conditions:
+        - condition: state
+          entity_id: !input helper_selector
+          state: State02
+        sequence: !input off_longR2
+      - conditions:
+        - condition: state
+          entity_id: !input helper_selector
+          state: State03
+        sequence: !input off_longR3
+      - conditions:
+        - condition: state
+          entity_id: !input helper_selector
+          state: State04
+        sequence: !input off_longR4
+  - conditions:
+    - condition: trigger
+      id: right
+    sequence:
+    - if:
+      - condition: state
+        entity_id: !input helper_selector
+        state: unknown
+      then:
+      - service: input_select.select_first
+        data: {}
+        target:
+          entity_id: !input helper_selector
+      else:
+      - service: input_select.select_next
+        data: {}
+        target:
+          entity_id: !input helper_selector
+  - conditions:
+    - condition: trigger
+      id: left
+    sequence:
+    - if:
+      - condition: state
+        entity_id: !input helper_selector
+        state: unknown
+      then:
+      - service: input_select.select_last
+        data: {}
+        target:
+          entity_id: !input helper_selector
+      else:
+      - service: input_select.select_previous
+        data: {}
+        target:
+          entity_id: !input helper_selector
+  - conditions:
+    - condition: trigger
+      id: right_long
+    sequence:
+    - choose:
+      - conditions:
+        - condition: state
+          entity_id: !input helper_selector
+          state: State01
+        sequence: !input right_longR1
+      - conditions:
+        - condition: state
+          entity_id: !input helper_selector
+          state: State02
+        sequence: !input right_longR2
+      - conditions:
+        - condition: state
+          entity_id: !input helper_selector
+          state: State03
+        sequence: !input right_longR3
+      - conditions:
+        - condition: state
+          entity_id: !input helper_selector
+          state: State04
+        sequence: !input right_longR4
+  - conditions:
+    - condition: trigger
+      id: left_long
+    sequence:
+    - choose:
+      - conditions:
+        - condition: state
+          entity_id: !input helper_selector
+          state: State01
+        sequence: !input left_longR1
+      - conditions:
+        - condition: state
+          entity_id: !input helper_selector
+          state: State02
+        sequence: !input left_longR2
+      - conditions:
+        - condition: state
+          entity_id: !input helper_selector
+          state: State03
+        sequence: !input left_longR3
+      - conditions:
+        - condition: state
+          entity_id: !input helper_selector
+          state: State04
+        sequence: !input left_longR4
