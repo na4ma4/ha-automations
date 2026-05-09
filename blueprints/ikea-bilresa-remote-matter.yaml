@@ -1,41 +1,76 @@
 blueprint:
-  name: IKEA BILRESA profile scroll and button actions
+  name: IKEA BILRESA profile event router
   description: >
-    Run different actions for each BILRESA profile/mode.
-    The physical profile button is not reported, but the current profile is
-    available as previousPosition on each event. Scroll actions are repeated
-    totalNumberOfPressesCounted times.
+    Route IKEA BILRESA event entities to actions.
+    Each profile exposes separate event entities. Scroll actions are repeated
+    totalNumberOfPressesCounted times. Button actions are routed by event_type:
+    multi_press_1, multi_press_2, multi_press_3, long_press, long_release.
 
   domain: automation
 
   input:
-    scroll_clockwise_event:
-      name: Clockwise scroll event entity
+    profile_1_scroll_clockwise_event:
+      name: Profile 1 - clockwise scroll event
       selector:
         entity:
           domain: event
 
-    scroll_counterclockwise_event:
-      name: Counter-clockwise scroll event entity
+    profile_1_scroll_counterclockwise_event:
+      name: Profile 1 - counter-clockwise scroll event
       selector:
         entity:
           domain: event
 
-    button_event:
-      name: Button press event entity
-      description: Usually event.bilresa_scroll_wheel_button_3
+    profile_1_button_event:
+      name: Profile 1 - button event
       selector:
         entity:
           domain: event
 
-    profile_1_clockwise:
-      name: Profile 1 - clockwise scroll
+    profile_2_scroll_clockwise_event:
+      name: Profile 2 - clockwise scroll event
+      selector:
+        entity:
+          domain: event
+
+    profile_2_scroll_counterclockwise_event:
+      name: Profile 2 - counter-clockwise scroll event
+      selector:
+        entity:
+          domain: event
+
+    profile_2_button_event:
+      name: Profile 2 - button event
+      selector:
+        entity:
+          domain: event
+
+    profile_3_scroll_clockwise_event:
+      name: Profile 3 - clockwise scroll event
+      selector:
+        entity:
+          domain: event
+
+    profile_3_scroll_counterclockwise_event:
+      name: Profile 3 - counter-clockwise scroll event
+      selector:
+        entity:
+          domain: event
+
+    profile_3_button_event:
+      name: Profile 3 - button event
+      selector:
+        entity:
+          domain: event
+
+    profile_1_scroll_clockwise:
+      name: Profile 1 - clockwise scroll action
       default: []
       selector:
         action:
 
-    profile_1_counterclockwise:
-      name: Profile 1 - counter-clockwise scroll
+    profile_1_scroll_counterclockwise:
+      name: Profile 1 - counter-clockwise scroll action
       default: []
       selector:
         action:
@@ -70,14 +105,14 @@ blueprint:
       selector:
         action:
 
-    profile_2_clockwise:
-      name: Profile 2 - clockwise scroll
+    profile_2_scroll_clockwise:
+      name: Profile 2 - clockwise scroll action
       default: []
       selector:
         action:
 
-    profile_2_counterclockwise:
-      name: Profile 2 - counter-clockwise scroll
+    profile_2_scroll_counterclockwise:
+      name: Profile 2 - counter-clockwise scroll action
       default: []
       selector:
         action:
@@ -112,14 +147,14 @@ blueprint:
       selector:
         action:
 
-    profile_3_clockwise:
-      name: Profile 3 - clockwise scroll
+    profile_3_scroll_clockwise:
+      name: Profile 3 - clockwise scroll action
       default: []
       selector:
         action:
 
-    profile_3_counterclockwise:
-      name: Profile 3 - counter-clockwise scroll
+    profile_3_scroll_counterclockwise:
+      name: Profile 3 - counter-clockwise scroll action
       default: []
       selector:
         action:
@@ -159,47 +194,62 @@ max: 100
 
 trigger:
   - platform: state
-    entity_id: !input scroll_clockwise_event
-    id: scroll_clockwise
+    entity_id: !input profile_1_scroll_clockwise_event
+    id: profile_1_scroll_clockwise
 
   - platform: state
-    entity_id: !input scroll_counterclockwise_event
-    id: scroll_counterclockwise
+    entity_id: !input profile_1_scroll_counterclockwise_event
+    id: profile_1_scroll_counterclockwise
 
   - platform: state
-    entity_id: !input button_event
-    id: button
+    entity_id: !input profile_1_button_event
+    id: profile_1_button
+
+  - platform: state
+    entity_id: !input profile_2_scroll_clockwise_event
+    id: profile_2_scroll_clockwise
+
+  - platform: state
+    entity_id: !input profile_2_scroll_counterclockwise_event
+    id: profile_2_scroll_counterclockwise
+
+  - platform: state
+    entity_id: !input profile_2_button_event
+    id: profile_2_button
+
+  - platform: state
+    entity_id: !input profile_3_scroll_clockwise_event
+    id: profile_3_scroll_clockwise
+
+  - platform: state
+    entity_id: !input profile_3_scroll_counterclockwise_event
+    id: profile_3_scroll_counterclockwise
+
+  - platform: state
+    entity_id: !input profile_3_button_event
+    id: profile_3_button
 
 variables:
-  profile: "{{ trigger.to_state.attributes.previousPosition | int(0) }}"
   event_type: "{{ trigger.to_state.attributes.event_type | default('') }}"
-  press_count: "{{ trigger.to_state.attributes.totalNumberOfPressesCounted | int(1) }}"
-  is_scroll: "{{ trigger.id in ['scroll_clockwise', 'scroll_counterclockwise'] }}"
-  is_button: "{{ trigger.id == 'button' }}"
-
-  scroll_repeat_count: >-
-    {% if is_scroll and event_type.startswith('multi_press_') %}
-      {{ press_count }}
-    {% else %}
-      1
-    {% endif %}
+  scroll_count: "{{ trigger.to_state.attributes.totalNumberOfPressesCounted | int(1) }}"
+  is_scroll: "{{ '_scroll_' in trigger.id }}"
+  is_button: "{{ trigger.id.endswith('_button') }}"
 
 condition:
   - condition: template
     value_template: >
-      {{ profile in [1, 2, 3]
-         and event_type in [
-           'multi_press_1',
-           'multi_press_2',
-           'multi_press_3',
-           'multi_press_4',
-           'multi_press_5',
-           'multi_press_6',
-           'multi_press_7',
-           'multi_press_8',
-           'long_press',
-           'long_release'
-         ] }}
+      {{ event_type in [
+        'multi_press_1',
+        'multi_press_2',
+        'multi_press_3',
+        'multi_press_4',
+        'multi_press_5',
+        'multi_press_6',
+        'multi_press_7',
+        'multi_press_8',
+        'long_press',
+        'long_release'
+      ] }}
 
 action:
   - choose:
@@ -212,38 +262,38 @@ action:
             value_template: "{{ is_scroll }}"
         sequence:
           - repeat:
-              count: "{{ scroll_repeat_count }}"
+              count: "{{ scroll_count }}"
               sequence:
                 - choose:
                     - conditions:
                         - condition: template
-                          value_template: "{{ profile == 1 and trigger.id == 'scroll_clockwise' }}"
-                      sequence: !input profile_1_clockwise
+                          value_template: "{{ trigger.id == 'profile_1_scroll_clockwise' }}"
+                      sequence: !input profile_1_scroll_clockwise
 
                     - conditions:
                         - condition: template
-                          value_template: "{{ profile == 1 and trigger.id == 'scroll_counterclockwise' }}"
-                      sequence: !input profile_1_counterclockwise
+                          value_template: "{{ trigger.id == 'profile_1_scroll_counterclockwise' }}"
+                      sequence: !input profile_1_scroll_counterclockwise
 
                     - conditions:
                         - condition: template
-                          value_template: "{{ profile == 2 and trigger.id == 'scroll_clockwise' }}"
-                      sequence: !input profile_2_clockwise
+                          value_template: "{{ trigger.id == 'profile_2_scroll_clockwise' }}"
+                      sequence: !input profile_2_scroll_clockwise
 
                     - conditions:
                         - condition: template
-                          value_template: "{{ profile == 2 and trigger.id == 'scroll_counterclockwise' }}"
-                      sequence: !input profile_2_counterclockwise
+                          value_template: "{{ trigger.id == 'profile_2_scroll_counterclockwise' }}"
+                      sequence: !input profile_2_scroll_counterclockwise
 
                     - conditions:
                         - condition: template
-                          value_template: "{{ profile == 3 and trigger.id == 'scroll_clockwise' }}"
-                      sequence: !input profile_3_clockwise
+                          value_template: "{{ trigger.id == 'profile_3_scroll_clockwise' }}"
+                      sequence: !input profile_3_scroll_clockwise
 
                     - conditions:
                         - condition: template
-                          value_template: "{{ profile == 3 and trigger.id == 'scroll_counterclockwise' }}"
-                      sequence: !input profile_3_counterclockwise
+                          value_template: "{{ trigger.id == 'profile_3_scroll_counterclockwise' }}"
+                      sequence: !input profile_3_scroll_counterclockwise
 
       ##########################################################################
       # Button events
@@ -256,75 +306,75 @@ action:
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ profile == 1 and event_type == 'multi_press_1' }}"
+                    value_template: "{{ trigger.id == 'profile_1_button' and event_type == 'multi_press_1' }}"
                 sequence: !input profile_1_single_press
 
               - conditions:
                   - condition: template
-                    value_template: "{{ profile == 1 and event_type == 'multi_press_2' }}"
+                    value_template: "{{ trigger.id == 'profile_1_button' and event_type == 'multi_press_2' }}"
                 sequence: !input profile_1_double_press
 
               - conditions:
                   - condition: template
-                    value_template: "{{ profile == 1 and event_type == 'multi_press_3' }}"
+                    value_template: "{{ trigger.id == 'profile_1_button' and event_type == 'multi_press_3' }}"
                 sequence: !input profile_1_triple_press
 
               - conditions:
                   - condition: template
-                    value_template: "{{ profile == 1 and event_type == 'long_press' }}"
+                    value_template: "{{ trigger.id == 'profile_1_button' and event_type == 'long_press' }}"
                 sequence: !input profile_1_long_press
 
               - conditions:
                   - condition: template
-                    value_template: "{{ profile == 1 and event_type == 'long_release' }}"
+                    value_template: "{{ trigger.id == 'profile_1_button' and event_type == 'long_release' }}"
                 sequence: !input profile_1_long_release
 
               - conditions:
                   - condition: template
-                    value_template: "{{ profile == 2 and event_type == 'multi_press_1' }}"
+                    value_template: "{{ trigger.id == 'profile_2_button' and event_type == 'multi_press_1' }}"
                 sequence: !input profile_2_single_press
 
               - conditions:
                   - condition: template
-                    value_template: "{{ profile == 2 and event_type == 'multi_press_2' }}"
+                    value_template: "{{ trigger.id == 'profile_2_button' and event_type == 'multi_press_2' }}"
                 sequence: !input profile_2_double_press
 
               - conditions:
                   - condition: template
-                    value_template: "{{ profile == 2 and event_type == 'multi_press_3' }}"
+                    value_template: "{{ trigger.id == 'profile_2_button' and event_type == 'multi_press_3' }}"
                 sequence: !input profile_2_triple_press
 
               - conditions:
                   - condition: template
-                    value_template: "{{ profile == 2 and event_type == 'long_press' }}"
+                    value_template: "{{ trigger.id == 'profile_2_button' and event_type == 'long_press' }}"
                 sequence: !input profile_2_long_press
 
               - conditions:
                   - condition: template
-                    value_template: "{{ profile == 2 and event_type == 'long_release' }}"
+                    value_template: "{{ trigger.id == 'profile_2_button' and event_type == 'long_release' }}"
                 sequence: !input profile_2_long_release
 
               - conditions:
                   - condition: template
-                    value_template: "{{ profile == 3 and event_type == 'multi_press_1' }}"
+                    value_template: "{{ trigger.id == 'profile_3_button' and event_type == 'multi_press_1' }}"
                 sequence: !input profile_3_single_press
 
               - conditions:
                   - condition: template
-                    value_template: "{{ profile == 3 and event_type == 'multi_press_2' }}"
+                    value_template: "{{ trigger.id == 'profile_3_button' and event_type == 'multi_press_2' }}"
                 sequence: !input profile_3_double_press
 
               - conditions:
                   - condition: template
-                    value_template: "{{ profile == 3 and event_type == 'multi_press_3' }}"
+                    value_template: "{{ trigger.id == 'profile_3_button' and event_type == 'multi_press_3' }}"
                 sequence: !input profile_3_triple_press
 
               - conditions:
                   - condition: template
-                    value_template: "{{ profile == 3 and event_type == 'long_press' }}"
+                    value_template: "{{ trigger.id == 'profile_3_button' and event_type == 'long_press' }}"
                 sequence: !input profile_3_long_press
 
               - conditions:
                   - condition: template
-                    value_template: "{{ profile == 3 and event_type == 'long_release' }}"
+                    value_template: "{{ trigger.id == 'profile_3_button' and event_type == 'long_release' }}"
                 sequence: !input profile_3_long_release
