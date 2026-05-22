@@ -238,6 +238,10 @@ variables:
 condition:
   - condition: template
     value_template: >
+      {{ trigger.from_state is not none and trigger.from_state.state not in ['unknown', 'unavailable'] }}
+
+  - condition: template
+    value_template: >
       {{ event_type in [
         'multi_press_1',
         'multi_press_2',
