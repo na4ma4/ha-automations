@@ -87,7 +87,7 @@ blueprint:
       selector:
         action:
 
-mode: queued
+mode: parallel
 max_exceeded: silent
 trace:
   stored_traces: 10
