@@ -8,7 +8,7 @@ blueprint:
 
     Based on https://community.home-assistant.io/t/zigbee2mqtt-ikea-tradfri-styrbar-4-buttons-universal-switch-for-4-different-states/520309'
   domain: automation
-  source_url: https://github.com/na4ma4/ha-automations/blob/main/blueprints/zigbee2mqtt-ikea-tradfri-styrbar-4-buttons-universal-switch-for-4-different-states.yaml
+  source_url: https://github.com/na4ma4/ha-automations/blob/main/blueprints/automations/zigbee2mqtt-ikea-tradfri-styrbar-4-buttons-universal-switch-for-4-different-states.yaml
   input:
     remote:
       name: Remote

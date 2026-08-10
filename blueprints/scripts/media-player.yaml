@@ -2,7 +2,7 @@ blueprint:
   domain: script
   name: Media Player Play/Stop
   description: Use a specified music source and play on a target, if the target is already playing then stop it.
-  source_url: https://github.com/na4ma4/ha-automations/blob/main/scripts/media-player.yaml
+  source_url: https://github.com/na4ma4/ha-automations/blob/main/blueprints/scripts/media-player.yaml
   input:
     media_player:
       name: Media Player
@@ -10,11 +10,23 @@ blueprint:
       selector:
         entity:
           domain: media_player
-    media_source:
-      name: Media Source
-      description: The media source to be played.
+    media_content_id:
+      name: Media Content ID
+      description: Media URL or media-source ID (for example media-source://media_source/local/chime.mp3)
       selector:
-        media:
+        text:
+    media_content_type:
+      name: Media Content Type
+      description: Type passed to media_player.play_media.
+      default: music
+      selector:
+        select:
+          options:
+            - music
+            - audio/mp3
+            - playlist
+            - tvshow
+            - video
     volume_level:
       name: Volume Level
       description: Volume used before starting playback.
@@ -26,8 +38,6 @@ blueprint:
           step: 0.05
 max_exceeded: silent
 sequence:
-  - variables:
-      selected_media: !input media_source
   - if:
       - condition: state
         entity_id: !input media_player
@@ -46,16 +56,6 @@ sequence:
         target:
           entity_id: !input media_player
         data:
-          media_content_id: >-
-            {% if selected_media is mapping %}
-              {{ selected_media.media_content_id }}
-            {% else %}
-              {{ selected_media }}
-            {% endif %}
-          media_content_type: >-
-            {% if selected_media is mapping and selected_media.media_content_type is defined %}
-              {{ selected_media.media_content_type }}
-            {% else %}
-              music
-            {% endif %}
+          media_content_id: !input media_content_id
+          media_content_type: !input media_content_type
 mode: single

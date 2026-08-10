@@ -71,7 +71,7 @@ blueprint:
       default: []
       selector:
         action: {}
-  source_url: https://github.com/na4ma4/ha-automations/blob/main/blueprints/infrared-rc6-codehandler.yaml
+  source_url: https://github.com/na4ma4/ha-automations/blob/main/blueprints/automations/infrared-rc6-codehandler.yaml
 variables:
   my_action_digit_0: !input action_digit_0
   my_action_digit_1: !input action_digit_1

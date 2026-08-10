@@ -9,7 +9,7 @@ blueprint:
     - Press the **1** or **2** buttons
     - Double press the **1** or **2** buttons.
     - Press and hold the **1** or **2** buttons. Actions will be executed every _Helper - Hold delay_ but maximum _Helper - Max number of loops_ times.
-  source_url: https://github.com/na4ma4/ha-automations/blob/main/blueprints/zigbee2mqtt_somrig_ikea.yaml
+  source_url: https://github.com/na4ma4/ha-automations/blob/main/blueprints/automations/zigbee2mqtt_somrig_ikea.yaml
   domain: automation
   input:
     z2m_device:

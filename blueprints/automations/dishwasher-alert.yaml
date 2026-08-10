@@ -20,7 +20,7 @@ blueprint:
       default: []
       selector:
         action: {}
-  source_url: https://github.com/na4ma4/ha-automations/blob/main/blueprints/dishwasher-alert.yaml
+  source_url: https://github.com/na4ma4/ha-automations/blob/main/blueprints/automations/dishwasher-alert.yaml
 trigger:
 - trigger: state
   entity_id: !input dishwasher

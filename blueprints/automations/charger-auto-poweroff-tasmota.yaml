@@ -52,7 +52,7 @@ blueprint:
       default: []
       selector:
         action: {}
-  source_url: https://github.com/na4ma4/ha-automations/blob/main/blueprints/charger-auto-poweroff-tasmota.yaml
+  source_url: https://github.com/na4ma4/ha-automations/blob/main/blueprints/automations/charger-auto-poweroff-tasmota.yaml
 trigger:
   - trigger: numeric_state
     entity_id: !input power_meter

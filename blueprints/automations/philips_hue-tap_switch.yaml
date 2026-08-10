@@ -2,7 +2,7 @@ blueprint:
   domain: automation
   name: Philips Hue Tap Switch (ZGPSWITCH)
   description: Quick and clean setup for Hue Tap switch.
-  source_url: https://github.com/na4ma4/ha-automations/blob/main/blueprints/philips_hue-tap_switch.yaml
+  source_url: https://github.com/na4ma4/ha-automations/blob/main/blueprints/automations/philips_hue-tap_switch.yaml
   input:
     huetap:
       name: Philips Hue Tap Switch

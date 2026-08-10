@@ -1,13 +1,12 @@
 blueprint:
   name: IKEA BILRESA profile event router
+  source_url: https://github.com/na4ma4/ha-automations/blob/main/blueprints/automations/ikea-bilresa-remote-matter.yaml
   description: >
     Route IKEA BILRESA event entities to actions.
     Each profile exposes separate event entities. Scroll actions are repeated
     totalNumberOfPressesCounted times. Button actions are routed by event_type:
     multi_press_1, multi_press_2, multi_press_3, long_press, long_release.
-
   domain: automation
-
   input:
     profile_1_scroll_clockwise_event:
       name: Profile 1 - clockwise scroll event
