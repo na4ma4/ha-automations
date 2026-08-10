@@ -1,0 +1,129 @@
+---
+blueprint:
+  name: Infrared RC6 Code Handler (RC6 Infrared integration)
+  description: >
+    Route digit button presses from an RC6 Infrared integration event entity
+    to Home Assistant action sequences. Held-button repeat events are ignored.
+  domain: automation
+  # yamllint disable-line rule:line-length
+  source_url: https://github.com/na4ma4/ha-automations/blob/main/blueprints/automations/infrared-rc6-infrared-plugin.yaml
+  input:
+    infrared_event:
+      name: Infrared event source
+      description: The Received command event entity created by RC6 Infrared.
+      selector:
+        entity:
+          filter:
+            - domain: event
+              integration: rc6_infrared
+
+    action_digit_0:
+      name: Digit 0 action
+      description: Action sequence to run when Digit 0 is pressed.
+      default: []
+      selector:
+        action:
+
+    action_digit_1:
+      name: Digit 1 action
+      description: Action sequence to run when Digit 1 is pressed.
+      default: []
+      selector:
+        action:
+
+    action_digit_2:
+      name: Digit 2 action
+      description: Action sequence to run when Digit 2 is pressed.
+      default: []
+      selector:
+        action:
+
+    action_digit_3:
+      name: Digit 3 action
+      description: Action sequence to run when Digit 3 is pressed.
+      default: []
+      selector:
+        action:
+
+    action_digit_4:
+      name: Digit 4 action
+      description: Action sequence to run when Digit 4 is pressed.
+      default: []
+      selector:
+        action:
+
+    action_digit_5:
+      name: Digit 5 action
+      description: Action sequence to run when Digit 5 is pressed.
+      default: []
+      selector:
+        action:
+
+    action_digit_6:
+      name: Digit 6 action
+      description: Action sequence to run when Digit 6 is pressed.
+      default: []
+      selector:
+        action:
+
+    action_digit_7:
+      name: Digit 7 action
+      description: Action sequence to run when Digit 7 is pressed.
+      default: []
+      selector:
+        action:
+
+    action_digit_8:
+      name: Digit 8 action
+      description: Action sequence to run when Digit 8 is pressed.
+      default: []
+      selector:
+        action:
+
+    action_digit_9:
+      name: Digit 9 action
+      description: Action sequence to run when Digit 9 is pressed.
+      default: []
+      selector:
+        action:
+
+mode: queued
+max_exceeded: silent
+trace:
+  stored_traces: 10
+
+trigger:
+  - trigger: state
+    entity_id: !input infrared_event
+
+condition:
+  - condition: template
+    value_template: >-
+      {{ trigger.to_state is not none
+         and trigger.to_state.attributes.event_type == 'press'
+         and trigger.to_state.attributes.address_hex == '0x3B' }}
+
+action:
+  - variables:
+      command: "{{ trigger.to_state.attributes.command_hex | default('') }}"
+  - choose:
+      - conditions: "{{ command == '0x9C' }}"
+        sequence: !input action_digit_0
+      - conditions: "{{ command == '0x44' }}"
+        sequence: !input action_digit_1
+      - conditions: "{{ command == '0x1D' }}"
+        sequence: !input action_digit_2
+      - conditions: "{{ command == '0x1C' }}"
+        sequence: !input action_digit_3
+      - conditions: "{{ command == '0x97' }}"
+        sequence: !input action_digit_4
+      - conditions: "{{ command == '0x98' }}"
+        sequence: !input action_digit_5
+      - conditions: "{{ command == '0x47' }}"
+        sequence: !input action_digit_6
+      - conditions: "{{ command == '0x52' }}"
+        sequence: !input action_digit_7
+      - conditions: "{{ command == '0x99' }}"
+        sequence: !input action_digit_8
+      - conditions: "{{ command == '0x9A' }}"
+        sequence: !input action_digit_9
