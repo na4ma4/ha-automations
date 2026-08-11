@@ -15,7 +15,7 @@ blueprint:
         entity:
           filter:
             - domain: event
-              integration: rc6_infrared
+              integration: universal_remote_proxy
 
     action_digit_0:
       name: Digit 0 action
