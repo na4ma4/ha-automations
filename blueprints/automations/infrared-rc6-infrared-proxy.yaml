@@ -1,12 +1,12 @@
 ---
 blueprint:
-  name: Infrared RC6 Code Handler (RC6 Infrared integration)
+  name: Infrared Proxy RC6 Code Handler
   description: >
     Route digit button presses from an RC6 Infrared integration event entity
     to Home Assistant action sequences. Held-button repeat events are ignored.
   domain: automation
   # yamllint disable-line rule:line-length
-  source_url: https://github.com/na4ma4/ha-automations/blob/main/blueprints/automations/infrared-rc6-infrared-plugin.yaml
+  source_url: https://github.com/na4ma4/ha-automations/blob/main/blueprints/automations/infrared-rc6-infrared-proxy.yaml
   input:
     infrared_event:
       name: Infrared event source
