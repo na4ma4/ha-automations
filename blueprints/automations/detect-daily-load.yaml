@@ -1,0 +1,82 @@
+blueprint:
+  name: Detect daily load
+  description: |
+    Monitor a sensor for usage during a day and run actions
+    at a paticular time if the threshold is exceeded or not met.
+  domain: automation
+  input:
+    target_sensor:
+      name: Target Sensor
+      description: The sensor to monitor for daily load
+      selector:
+        entity:
+          multiple: false
+    threshold:
+      name: Threshold
+      description: The threshold value to compare against the sensor's state
+      default: 0
+      selector:
+        number:
+          min: 0
+    time_to_check:
+      name: Time to Check
+      description: The time of day to check the sensor's value
+      default: "23:59"
+      selector:
+        time:
+    theshold_last_seen_helper:
+      name: Threshold Last Seen Helper
+      description: A helper to store the last time the threshold was exceeded
+      selector:
+        entity:
+          domain: input_datetime
+    on_threshold_actions:
+      name: On Threshold Actions
+      description: Actions to run when the threshold is exceeded
+      default: []
+      selector:
+        action: {}
+    on_no_threshold_actions:
+      name: On No Threshold Actions
+      description: Actions to run when the threshold is not exceeded
+      default: []
+      selector:
+        action: {}
+  source_url: https://github.com/na4ma4/ha-automations/blob/main/blueprints/automations/detect-daily-load.yaml
+trigger:
+  - id: daily_check
+    platform: time
+    at: !input time_to_check
+  - id: sensor_threshold
+    platform: numeric_state
+    entity_id: !input target_sensor
+    above: !input threshold
+action:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: daily_check
+        sequence:
+          - variables:
+              last_seen: "{{ state_attr(!input theshold_last_seen_helper, 'timestamp') | default(0) }}"
+              now: "{{ now().timestamp() }}"
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ now - last_seen < 86400 }}"
+                sequence:
+                  - service: script.turn_on
+                    data:
+                      entity_id: !input on_threshold_actions
+                default:
+                  - service: script.turn_on
+                    data:
+                      entity_id: !input on_no_threshold_actions
+      - conditions:
+          - condition: trigger
+            id: sensor_threshold
+        sequence:
+          - service: input_datetime.set_datetime
+            data:
+              entity_id: !input theshold_last_seen_helper
+              time: "{{ now().timestamp() }}"
