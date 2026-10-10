@@ -1,12 +1,12 @@
 blueprint:
   name: Detect daily load
   description: |
-    Checks once a day whether a sensor exceeded a threshold recently, and
-    runs one set of actions or the other.
+    Checks once a day whether a sensor exceeded a threshold recently, and runs
+    one set of actions or the other.
 
     **How it works**
-    - Whenever the sensor changes to a value above the threshold, the current
-      time is written to the "Threshold Last Seen Helper".
+    - Whenever the sensor rises above the threshold, the current time is written
+      to the "Threshold Last Seen Helper".
     - At the "Time to Check", if the helper was updated within the "Period"
       (counting back from the check time), the "On Threshold Actions" run.
       Otherwise the "On No Threshold Actions" run.
@@ -15,9 +15,11 @@ blueprint:
     - An `input_datetime` helper with both date and time enabled.
 
     **Notes**
-    - The period is a rolling window ending at the check time, not
-      "since midnight". The default of 24 hours covers the previous day.
-    - Nothing runs outside the daily check; the sensor only updates the helper.
+    - The period is a rolling window ending at the check time, not "since
+      midnight". The default of 24 hours covers the previous day.
+    - The helper is only written when the sensor crosses above the threshold, so
+      a load that stays above it for longer than the period will look stale.
+    - The threshold is available to your actions as `{{ threshold }}`.
   domain: automation
   input:
     target_sensor:
@@ -25,27 +27,31 @@ blueprint:
       description: The sensor to monitor for daily load
       selector:
         entity:
-          domain: sensor
+          domain:
+            - sensor
           multiple: false
+          reorder: false
     threshold:
       name: Threshold
       description: The threshold value to compare against the sensor's state
       default: 0
       selector:
         number:
-          min: 0
+          min: 0.0
+          step: 0.1
+          mode: box
     time_to_check:
       name: Time to Check
       description: The time of day to check the sensor's value
       default: "23:59"
       selector:
-        time:
+        time: {}
     period:
       name: Period
-      description: >
+      description: >-
         How far back from the check time to look for the threshold being
-        exceeded. If the helper was updated within this period, the
-        threshold actions run.
+        exceeded. If the helper was updated within this period, the threshold
+        actions run.
       default:
         hours: 24
         minutes: 0
@@ -53,14 +59,18 @@ blueprint:
       selector:
         duration:
           enable_day: true
+          enable_second: true
     threshold_last_seen_helper:
       name: Threshold Last Seen Helper
-      description: >
+      description: >-
         An input_datetime helper (with date and time) used to store the last
         time the threshold was exceeded.
       selector:
         entity:
-          domain: input_datetime
+          domain:
+            - input_datetime
+          multiple: false
+          reorder: false
     on_threshold_actions:
       name: On Threshold Actions
       description: Actions to run when the threshold is exceeded
@@ -73,7 +83,7 @@ blueprint:
       default: []
       selector:
         action: {}
-  source_url: https://github.com/na4ma4/ha-automations/blob/main/blueprints/automations/detect-daily-load.yaml
+  source_url: https://github.com/na4ma4/ha-automations/blob/main/blueprints/automation/detect-daily-load.yaml
 mode: queued
 max_exceeded: silent
 variables:
@@ -81,33 +91,26 @@ variables:
   threshold: !input threshold
   last_seen_helper: !input threshold_last_seen_helper
   period_input: !input period
-  period_seconds: >
+  period_seconds: >-
     {{ (period_input.days | default(0) | int) * 86400
        + (period_input.hours | default(0) | int) * 3600
        + (period_input.minutes | default(0) | int) * 60
        + (period_input.seconds | default(0) | int) }}
-trigger:
+triggers:
   - id: daily_check
-    platform: time
+    trigger: time
     at: !input time_to_check
   - id: sensor_update
-    platform: state
+    trigger: numeric_state
     entity_id: !input target_sensor
-condition:
-  - condition: or
-    conditions:
-      - condition: trigger
-        id: daily_check
-      - condition: numeric_state
-        entity_id: !input target_sensor
-        above: !input threshold
-action:
+    above: !input threshold
+actions:
   - choose:
       - conditions:
           - condition: trigger
             id: sensor_update
         sequence:
-          - service: input_datetime.set_datetime
+          - action: input_datetime.set_datetime
             target:
               entity_id: !input threshold_last_seen_helper
             data:
@@ -116,12 +119,11 @@ action:
           - condition: trigger
             id: daily_check
           - condition: template
-            value_template: >
-              {{ now().timestamp() - as_timestamp(states(last_seen_helper), 0) < period_seconds | int }}
+            value_template: >-
+              {{ now().timestamp() - as_timestamp(states(last_seen_helper), 0)
+                 < period_seconds | int }}
         sequence: !input on_threshold_actions
-    default:
-      - choose:
-          - conditions:
-              - condition: trigger
-                id: daily_check
-            sequence: !input on_no_threshold_actions
+      - conditions:
+          - condition: trigger
+            id: daily_check
+        sequence: !input on_no_threshold_actions
